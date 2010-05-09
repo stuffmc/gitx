@@ -60,22 +60,35 @@
 	else
 		description = [NSString stringWithFormat:@"Push updates to remote %@", [remoteRef remoteName]];
 
-	NSAlert *alert = [NSAlert alertWithMessageText:description
-									 defaultButton:@"Push"
-								   alternateButton:@"Cancel"
-									   otherButton:nil
-						 informativeTextWithFormat:@"Are you sure you want to %@?", description];
-
 	NSMutableDictionary *info = [NSMutableDictionary dictionary];
 	if (ref)
 		[info setObject:ref forKey:kGitXBranchType];
 	if (remoteRef)
 		[info setObject:remoteRef forKey:kGitXRemoteType];
+	[info setObject:description forKey:kGitXPushDescription];
 
-	[alert beginSheetModalForWindow:[historyController.repository.windowController window]
-					  modalDelegate:self
-					 didEndSelector:@selector(confirmPushRefSheetDidEnd:returnCode:contextInfo:)
-						contextInfo:info];
+	if ([PBGitDefaults confirmPush]) { // TODO: Also skip the confirmation panel if the user pressed the Option Key.
+		NSAlert *alert = [NSAlert alertWithMessageText:description
+										 defaultButton:@"Push"
+									   alternateButton:@"Cancel"
+										   otherButton:nil
+							 informativeTextWithFormat:@"Are you sure you want to %@?", description];
+		
+		[alert beginSheetModalForWindow:[historyController.repository.windowController window]
+						  modalDelegate:self
+						 didEndSelector:@selector(confirmPushRefSheetDidEnd:returnCode:contextInfo:)
+							contextInfo:info];
+	} else {
+		[self beginPushToRemote:info];
+	}
+
+}
+
+- (void) beginPushToRemote:(void *)contextInfo {
+	PBGitRef *ref = [(NSDictionary *)contextInfo objectForKey:kGitXBranchType];
+	PBGitRef *remoteRef = [(NSDictionary *)contextInfo objectForKey:kGitXRemoteType];
+	NSLog(@"Will now %@", [(NSDictionary *)contextInfo objectForKey:kGitXPushDescription]);
+	[historyController.repository beginPushRef:ref toRemote:remoteRef];
 }
 
 - (void) confirmPushRefSheetDidEnd:(NSAlert *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
@@ -83,10 +96,7 @@
     [[sheet window] orderOut:nil];
 
 	if (returnCode == NSAlertDefaultReturn) {
-		PBGitRef *ref = [(NSDictionary *)contextInfo objectForKey:kGitXBranchType];
-		PBGitRef *remoteRef = [(NSDictionary *)contextInfo objectForKey:kGitXRemoteType];
-
-		[historyController.repository beginPushRef:ref toRemote:remoteRef];
+		[self beginPushToRemote:contextInfo];
 	}
 }
 

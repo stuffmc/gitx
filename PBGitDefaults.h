@@ -34,5 +34,6 @@
 + (void) removePreviousDocumentPaths;
 + (NSInteger) branchFilter;
 + (void) setBranchFilter:(NSInteger)state;
++ (BOOL) confirmPush;
 
 @end

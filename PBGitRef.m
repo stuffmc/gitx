@@ -18,6 +18,7 @@ NSString * const kGitXTagRefPrefix    = @"refs/tags/";
 NSString * const kGitXBranchRefPrefix = @"refs/heads/";
 NSString * const kGitXRemoteRefPrefix = @"refs/remotes/";
 
+NSString * const kGitXPushDescription = @"pushDescription";
 
 @implementation PBGitRef
 

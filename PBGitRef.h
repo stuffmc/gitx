@@ -19,6 +19,7 @@ extern NSString * const kGitXTagRefPrefix;
 extern NSString * const kGitXBranchRefPrefix;
 extern NSString * const kGitXRemoteRefPrefix;
 
+extern NSString * const kGitXPushDescription;
 
 @interface PBGitRef : NSObject <PBGitRefish> {
 	NSString* ref;

@@ -25,6 +25,7 @@
 #define kOpenPreviousDocumentsOnLaunch @"PBOpenPreviousDocumentsOnLaunch"
 #define kPreviousDocumentPaths @"PBPreviousDocumentPaths"
 #define kBranchFilterState @"PBBranchFilter"
+#define kConfirmPush @"PBConfirmPush"
 
 @implementation PBGitDefaults
 
@@ -53,6 +54,8 @@
 					  forKey:kShouldCheckoutBranch];
 	[defaultValues setObject:[NSNumber numberWithBool:NO]
                       forKey:kOpenPreviousDocumentsOnLaunch];
+	[defaultValues setObject:[NSNumber numberWithBool:YES]
+                      forKey:kConfirmPush];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
 }
 
@@ -168,6 +171,11 @@
 + (void) setBranchFilter:(NSInteger)state
 {
 	[[NSUserDefaults standardUserDefaults] setInteger:state forKey:kBranchFilterState];
+}
+
++ (BOOL) confirmPush
+{
+	return [[NSUserDefaults standardUserDefaults] boolForKey:kConfirmPush];
 }
 
 @end
